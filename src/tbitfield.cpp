@@ -184,13 +184,35 @@ TBitField TBitField::operator~(void) // отрицание
 
 istream &operator>>(istream &istr, TBitField &bf) // ввод
 {
+  char ch;
+  int i = 0;
+  
+  while ((ch = getchar()) != EOF && ch != '\n')
+  {
+    switch (ch)
+    {
+      case '0':
+      bf.ClrBit(i);
+      break;
+      case '1':
+      bf.SetBit(i);
+      break;
+      default:
+      throw runtime_error("Incorrect input");
+      break;
+    }
+    
+    i++;
+  }
+
   return istr;
 }
 
 ostream &operator<<(ostream &ostr, const TBitField &bf) // вывод
 {
-  for (size_t i = 0; i < bf.GetLength(); i++) {
-        ostr << bf.GetBit(i);
-    }
+  for (int i = 0; i < bf.GetLength(); i++) {
+    ostr << bf.GetBit(i);
+  }
+
   return ostr;
 }
