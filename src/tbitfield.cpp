@@ -25,7 +25,7 @@ size_t power_of_two_sizeof(size_t tsize)
 
 TBitField::TBitField(int len)
 {
-  if (len <= 0) throw length_error("Length should be positive");
+  if (len < 0) throw length_error("Length should not be negativw");
 
   BitLen = len;
   MemLen = (BitLen + sizeof(TELEM)*8 - 1) >> (power_of_two_sizeof(sizeof(TELEM)));
@@ -201,7 +201,7 @@ istream &operator>>(istream &istr, TBitField &bf) // ввод
       throw runtime_error("Incorrect input");
       break;
     }
-    
+
     i++;
   }
 
