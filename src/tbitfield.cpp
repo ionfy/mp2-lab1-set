@@ -11,7 +11,7 @@
 static const int FAKE_INT = -1;
 static TBitField FAKE_BITFIELD(1);
 
-size_t power_of_two_sizeof(size_t tsize)
+constexpr size_t power_of_two_sizeof(size_t tsize)
 {
   size_t digit = 0;
   tsize = tsize * 8;
@@ -23,12 +23,15 @@ size_t power_of_two_sizeof(size_t tsize)
   return digit;
 }
 
+constexpr size_t DIGIT = power_of_two_sizeof(sizeof(TELEM));
+const size_t MAXTELEM = sizeof(TELEM)*8 - 1;
+
 TBitField::TBitField(int len)
 {
   if (len < 0) throw length_error("Length should not be negativw");
 
   BitLen = len;
-  MemLen = (BitLen + sizeof(TELEM)*8 - 1) >> (power_of_two_sizeof(sizeof(TELEM)));
+  MemLen = (BitLen + MAXTELEM) >> (DIGIT);
   pMem = new TELEM[MemLen]();
 }
 
@@ -52,12 +55,12 @@ TBitField::~TBitField()
 
 int TBitField::GetMemIndex(const int n) const // индекс Мем для бита n
 {
-    return n >> (power_of_two_sizeof(sizeof(TELEM)));
+    return n >> DIGIT;
 }
 
 TELEM TBitField::GetMemMask(const int n) const // битовая маска для бита n
 {
-    return 1 << (n & (sizeof(TELEM)*8 - 1));
+    return 1 << (n & MAXTELEM);
 }
 
 // доступ к битам битового поля
@@ -175,7 +178,7 @@ TBitField TBitField::operator~(void) // отрицание
     rbf.pMem[i] = ~pMem[i];
   }
   
-  rbf.pMem[MemLen - 1] &= ((TELEM)1 << (BitLen & (sizeof(TELEM)*8 - 1))) - 1;
+  rbf.pMem[MemLen - 1] &= ((TELEM)1 << (BitLen & MAXTELEM)) - 1;
 
   return rbf;
 }
